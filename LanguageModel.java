@@ -38,13 +38,14 @@ public class LanguageModel {
 
     // Computes and sets the probabilities (p and cp fields) of all the
 	// characters in the given list. */
-	public void calculateProbabilities(List probs) {				
+	void calculateProbabilities(List probs) {				
 		// Your code goes here
 	}
 
     // Returns a random character from the given probabilities list.
-	public char getRandomChar(List probs) {
+	char getRandomChar(List probs) {
 		// Your code goes here
+		return ' ';
 	}
 
     /**
@@ -56,6 +57,7 @@ public class LanguageModel {
 	 */
 	public String generate(String initialText, int textLength) {
 		// Your code goes here
+        return "";
 	}
 
     /** Returns a string representing the map of this language model. */

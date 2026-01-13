@@ -16,14 +16,15 @@ public class List {
         first = null;
         size = 0;
     }
-
+    
     /** Returns the number of elements in this list. */
     public int getSize() {
  	      return size;
     }
 
-    /** Returns the first element in the list */
+    /** Returns the CharData of the first element in this list. */
     public CharData getFirst() {
+        // Your code goes here
         return first.cp;
     }
 
@@ -35,6 +36,7 @@ public class List {
     /** GIVE Textual representation of this list. */
     public String toString() {
         // Your code goes here
+        return "";
     }
 
     /** Returns the index of the first CharData object in this list
@@ -42,6 +44,7 @@ public class List {
      *  or -1 if there is no such object in this list. */
     public int indexOf(char chr) {
         // Your code goes here
+        return -1;
     }
 
     /** If the given character exists in one of the CharData objects in this list,
@@ -56,6 +59,7 @@ public class List {
      *  true. Otherwise, returns false. */
     public boolean remove(char chr) {
         // Your code goes here
+        return false;
     }
 
     /** Returns the CharData object at the specified index in this list. 
@@ -63,6 +67,7 @@ public class List {
      *  throws an IndexOutOfBoundsException. */
     public CharData get(int index) {
         // Your code goes here
+        return null;
     }
 
     /** Returns an array of CharData objects, containing all the CharData objects in this list. */
