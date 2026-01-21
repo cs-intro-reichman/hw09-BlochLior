@@ -48,6 +48,9 @@ public class LanguageModel {
             }
             probs.update(nextChar);
         }
+        for (List list : CharDataMap.values()) {
+            calculateProbabilities(list);
+        }
 	}
 
     // Computes and sets the probabilities (p and cp fields) of all the

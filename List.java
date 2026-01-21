@@ -43,21 +43,18 @@ public class List {
     
     /** GIVE Textual representation of this list. */
     public String toString() {
-        StringBuilder resultStringBuilder = new StringBuilder('(');
-        // List is empty, escape quick:
-        if (size == 0) {
-            resultStringBuilder.append(')');
-        } else {
-            // There's at least one node in the list that should be stringified
-            for (int i = 0; i < size; i++) {
-                CharData currentCharData = get(i);
-                resultStringBuilder.append(currentCharData.toString());
-                resultStringBuilder.append('\s');
+        if (size == 0) return "()";
+        StringBuilder str = new StringBuilder("(");
+        Node current = first;
+        while (current != null) {
+            str.append(current.cp.toString());
+            if (current.next != null) {
+                str.append(" ");
             }
-            resultStringBuilder.substring(0, resultStringBuilder.length()-1);
-            resultStringBuilder.append(")");
-        }            
-        return resultStringBuilder.toString();
+            current = current.next;
+        }
+        str.append(")");
+        return str.toString();
     }
 
     /** Returns the index of the first CharData object in this list
