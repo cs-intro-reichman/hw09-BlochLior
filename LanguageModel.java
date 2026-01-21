@@ -33,19 +33,56 @@ public class LanguageModel {
 
     /** Builds a language model from the text in the given file (the corpus). */
 	public void train(String fileName) {
-		// Your code goes here
+		In in = new In(fileName);
+        
+        // entire text because this is how the tests work apparently
+        String text = in.readAll();
+
+        for (int i = 0; i < text.length() - windowLength; i++) {
+            String window = text.substring(i, i + windowLength);
+            char nextChar = text.charAt(i + windowLength);
+            List probs = CharDataMap.get(window);
+            if (probs == null) {
+                probs = new List();
+                CharDataMap.put(window, probs);
+            }
+            probs.update(nextChar);
+        }
 	}
 
     // Computes and sets the probabilities (p and cp fields) of all the
 	// characters in the given list. */
 	void calculateProbabilities(List probs) {				
-		// Your code goes here
+		double cp = 0.0;
+        int n = 0;
+        // Count how many chars in toto
+        ListIterator countIter = probs.listIterator(0);
+        while (countIter.hasNext()) {
+            n += countIter.next().count;
+        }
+        // Set cp and p:
+        ListIterator iterator = probs.listIterator(0);
+        while (iterator.hasNext()) {
+            CharData currentChar = iterator.next();
+            currentChar.p = (double) currentChar.count / n;
+            cp += currentChar.p;
+            currentChar.cp = cp;
+        }
 	}
 
     // Returns a random character from the given probabilities list.
 	char getRandomChar(List probs) {
-		// Your code goes here
-		return ' ';
+		double r = randomGenerator.nextDouble();
+        // go on iterating using iterator;
+        ListIterator iterator = probs.listIterator(0);
+        while (iterator.hasNext()) {
+            CharData currentChar = iterator.next();
+            if (currentChar.cp > r) {
+                return currentChar.chr;
+            }
+        }
+        // shouldn't reach this point in the code, but rounding error failsafe
+		return probs.get(probs.getSize() - 1).chr;
 	}
 
     /**
@@ -56,21 +93,66 @@ public class LanguageModel {
 	 * @return the generated text
 	 */
 	public String generate(String initialText, int textLength) {
-		// Your code goes here
-        return "";
+		if (initialText.length() < windowLength) {
+            return initialText;
+        }
+        String generatedText = initialText;
+        String window = generatedText.substring(generatedText.length() - windowLength);
+        while (generatedText.length() < textLength) {
+            List probs = CharDataMap.get(window);
+            if (probs == null) {
+                return generatedText;
+            }
+            char nextChar = getRandomChar(probs);
+            generatedText += nextChar;
+            window = generatedText.substring(generatedText.length() - windowLength);
+        }
+        return generatedText;
 	}
 
     /** Returns a string representing the map of this language model. */
 	public String toString() {
-		StringBuilder str = new StringBuilder();
-		for (String key : CharDataMap.keySet()) {
-			List keyProbs = CharDataMap.get(key);
-			str.append(key + " : " + keyProbs + "\n");
-		}
-		return str.toString();
+		StringBuilder out = new StringBuilder();
+        for (String key : CharDataMap.keySet()) {
+            List probs = CharDataMap.get(key);
+            
+            // Print the key
+            out.append(key).append(" : ["); // Formatting key start
+            
+            // Iterate over the list to format items nicely
+            for (int i = 0; i < probs.getSize(); i++) {
+                CharData cd = probs.get(i);
+                out.append("(");
+                out.append(cd.chr).append(", ");
+                out.append(cd.count).append(", ");
+                out.append(cd.p).append(", ");
+                out.append(cd.cp);
+                out.append(")");
+                
+                // Add semicolon if not the last item
+                if (i < probs.getSize() - 1) {
+                    out.append("; ");
+                }
+            }
+            out.append("]\n");
+        }
+        return out.toString();
 	}
 
     public static void main(String[] args) {
-		// Your code goes here
+        int windowLength = Integer.parseInt(args[0]);
+        String initialText = args[1];
+        int generatedTextLength = Integer.parseInt(args[2]);
+        Boolean randomGeneration = args[3].equals("random");
+        String fileName = args[4];
+
+        LanguageModel lm;
+        if (randomGeneration) {
+            lm = new LanguageModel(windowLength);
+        } else {
+            lm = new LanguageModel(windowLength, 20);
+        }
+        lm.train(fileName);
+        System.out.println(lm.generate(initialText, generatedTextLength));
     }
 }
