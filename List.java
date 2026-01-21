@@ -4,7 +4,7 @@
  *  the class represents a list of CharData objects. Likwise, the API of the class does not
  *  mention the existence of the Node objects). */
 public class List {
-
+    
     // Points to the first node in this list
     private Node first;
 
@@ -19,31 +19,66 @@ public class List {
     
     /** Returns the number of elements in this list. */
     public int getSize() {
- 	      return size;
+        return size;
     }
 
     /** Returns the CharData of the first element in this list. */
     public CharData getFirst() {
-        // Your code goes here
+        if (size == 0) {
+            return null;
+        }
         return first.cp;
     }
 
     /** GIVE Adds a CharData object with the given character to the beginning of this list. */
     public void addFirst(char chr) {
-        // Your code goes here
+        // New CharData obj:
+        CharData addedData = new CharData(chr);
+        // Node for new CharData obj:
+        Node first = new Node(addedData, this.first);
+        // Updating first field for List, and updating size
+        this.first = first;
+        size++;
     }
     
     /** GIVE Textual representation of this list. */
     public String toString() {
-        // Your code goes here
-        return "";
+        StringBuilder resultStringBuilder = new StringBuilder('(');
+        // List is empty, escape quick:
+        if (size == 0) {
+            resultStringBuilder.append(')');
+        } else {
+            // There's at least one node in the list that should be stringified
+            for (int i = 0; i < size; i++) {
+                CharData currentCharData = get(i);
+                resultStringBuilder.append(currentCharData.toString());
+                resultStringBuilder.append('\s');
+            }
+            resultStringBuilder.substring(0, resultStringBuilder.length()-1);
+            resultStringBuilder.append(")");
+        }            
+        return resultStringBuilder.toString();
     }
 
     /** Returns the index of the first CharData object in this list
      *  that has the same chr value as the given char,
      *  or -1 if there is no such object in this list. */
     public int indexOf(char chr) {
-        // Your code goes here
+        Node currentNode = first;
+        int index = 0;
+        if (currentNode == null) {
+            return -1;
+        }
+        while (currentNode.next != null) {
+            if (currentNode.cp.chr == chr) {
+                return index;
+            }
+            index++;
+            currentNode = currentNode.next;
+        }
+        if (currentNode.cp.equals(chr)) {
+            return index;
+        }
         return -1;
     }
 
@@ -51,14 +86,48 @@ public class List {
      *  increments its counter. Otherwise, adds a new CharData object with the
      *  given chr to the beginning of this list. */
     public void update(char chr) {
-        // Your code goes here
+        int index = indexOf(chr);
+        if (index != -1) {
+            CharData updatedNode = get(index);
+            updatedNode.count++;
+        } else {
+            // New node needed as none fitting exist yet:
+            addFirst(chr);
+        }
     }
 
     /** GIVE If the given character exists in one of the CharData objects
      *  in this list, removes this CharData object from the list and returns
      *  true. Otherwise, returns false. */
+    // Case 3: if to be removed is the last one, then the size remains the
+        // original size, and the currentNode pointer in the while loop moved until
+        // the last index; as this is a single case, i decided to not add a field
+        // in the list for the last node and second to last node, as i think it just
+        // adds fields that make the code less readable, and as such less-than this
+        // version, just for a single case use of removal of last node.
     public boolean remove(char chr) {
-        // Your code goes here
+        // Sanity check: size is 0:
+        if (size == 0) {
+            return false;
+        }
+        Node prev = null;
+        Node current = first;
+        while (current != null) {
+            if (current.cp.chr == chr) {
+                if (prev == null) {
+                    // just remove first element
+                    first = first.next;
+                } else {
+                    // remove element from middle or end
+                    prev.next = current.next;
+                }
+                size--;
+                return true;
+            }
+            // Pointer advancement:
+            prev = current;
+            current = current.next;
+        }
         return false;
     }
 
@@ -66,10 +135,18 @@ public class List {
      *  If the index is negative or is greater than the size of this list, 
      *  throws an IndexOutOfBoundsException. */
     public CharData get(int index) {
-        // Your code goes here
-        return null;
+        // Sanity check:
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        
+        Node current = first;
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+        return current.cp;
     }
-
+    
     /** Returns an array of CharData objects, containing all the CharData objects in this list. */
     public CharData[] toArray() {
 	    CharData[] arr = new CharData[size];
