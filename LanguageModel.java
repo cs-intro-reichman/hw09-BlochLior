@@ -107,14 +107,15 @@ public class LanguageModel {
 		if (initialText.length() < windowLength) {
             return initialText;
         }
-        String generatedText = initialText;
+        String generatedText = initialText.replaceAll("\r", "");
         String window = generatedText.substring(generatedText.length() - windowLength);
-        while (generatedText.length() < textLength) {
+        while (generatedText.length() < textLength + initialText.length()) {
             List probs = CharDataMap.get(window);
             if (probs == null) {
                 return generatedText;
             }
             char nextChar = getRandomChar(probs);
+            //System.out.println((int) nextChar);
             generatedText += nextChar;
             window = generatedText.substring(generatedText.length() - windowLength);
         }
