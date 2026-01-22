@@ -34,6 +34,7 @@ public class List {
         // Node for new CharData obj:
         Node first = new Node(addedData, this.first);
         // Updating first field for List, and updating size
+        first.next = this.first;
         this.first = first;
         size++;
     }
