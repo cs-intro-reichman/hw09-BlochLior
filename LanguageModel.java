@@ -27,7 +27,7 @@ public class LanguageModel {
      * different random texts. Good for production. */
     public LanguageModel(int windowLength) {
         this.windowLength = windowLength;
-        randomGenerator = new Random(20);
+        randomGenerator = new Random();
         CharDataMap = new HashMap<String, List>();
     }
 
@@ -84,17 +84,16 @@ public class LanguageModel {
 
     // Returns a random character from the given probabilities list.
 	char getRandomChar(List probs) {
+        if (probs == null || probs.getSize() == 0) return ' ';
 		double r = randomGenerator.nextDouble();
         // go on iterating using iterator;
-        ListIterator iterator = probs.listIterator(0);
-        while (iterator.hasNext()) {
-            CharData currentChar = iterator.next();
-            if (currentChar.cp > r) {
-                return currentChar.chr;
+        CharData[] arr = probs.toArray();
+        for (int i = 0; i < arr.length; i++) {
+            if (r < arr[i].cp) {
+                return arr[i].chr;
             }
         }
-        // shouldn't reach this point in the code, but rounding error failsafe
-		return probs.get(probs.getSize() - 1).chr;
+        return arr[arr.length - 1].chr;
 	}
 
     /**
