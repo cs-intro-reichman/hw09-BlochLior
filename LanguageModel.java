@@ -27,7 +27,7 @@ public class LanguageModel {
      * different random texts. Good for production. */
     public LanguageModel(int windowLength) {
         this.windowLength = windowLength;
-        randomGenerator = new Random();
+        randomGenerator = new Random(20);
         CharDataMap = new HashMap<String, List>();
     }
 
