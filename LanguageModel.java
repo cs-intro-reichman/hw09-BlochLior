@@ -127,7 +127,7 @@ public class LanguageModel {
 		StringBuilder out = new StringBuilder();
         for (String key : CharDataMap.keySet()) {
             List probs = CharDataMap.get(key);
-            out.append(key).append(" : [" + probs + "\n");
+            out.append(key).append(" : " + probs + "\n");
         }
         return out.toString();
 	}

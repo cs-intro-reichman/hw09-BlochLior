@@ -128,6 +128,12 @@ public class LanguageModelTester {
                 bw.close();   
                 // ACTUAL TEST
                 languageModel.train(file.getName());
+                //Debug
+                System.out.println("actual");
+                System.out.println(languageModel.toString());
+                System.out.println("expected");
+                System.out.println(expected[i]);
+                //Debug
                 res = stringEqualsNoSpaces(languageModel.toString(), expected[i]);
                 // ACTUAL TEST ENDS
 
