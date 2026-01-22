@@ -24,9 +24,6 @@ public class List {
 
     /** Returns the CharData of the first element in this list. */
     public CharData getFirst() {
-        if (size == 0) {
-            return null;
-        }
         return first.cp;
     }
 
@@ -43,18 +40,17 @@ public class List {
     
     /** GIVE Textual representation of this list. */
     public String toString() {
-        if (size == 0) return "()";
-        StringBuilder str = new StringBuilder("(");
+        String out = "(";
         Node current = first;
         while (current != null) {
-            str.append(current.cp.toString());
-            if (current.next != null) {
-                str.append(" ");
-            }
+            out += current.cp;
             current = current.next;
+            if (current != null) {
+                out += " ";
+            }
         }
-        str.append(")");
-        return str.toString();
+        out += ")";
+        return out;
     }
 
     /** Returns the index of the first CharData object in this list
@@ -63,18 +59,13 @@ public class List {
     public int indexOf(char chr) {
         Node currentNode = first;
         int index = 0;
-        if (currentNode == null) {
-            return -1;
-        }
-        while (currentNode.next != null) {
-            if (currentNode.cp.chr == chr) {
+        
+        while (currentNode != null) {
+            if (currentNode.cp.equals(chr)) {
                 return index;
             }
-            index++;
             currentNode = currentNode.next;
-        }
-        if (currentNode.cp.equals(chr)) {
-            return index;
+            index++;
         }
         return -1;
     }
@@ -85,8 +76,11 @@ public class List {
     public void update(char chr) {
         int index = indexOf(chr);
         if (index != -1) {
-            CharData updatedNode = get(index);
-            updatedNode.count++;
+            Node current = first;
+            for (int i = 0; i < index; i++) {
+                current = current.next;
+            }
+            current.cp.count++;
         } else {
             // New node needed as none fitting exist yet:
             addFirst(chr);
@@ -103,26 +97,21 @@ public class List {
         // adds fields that make the code less readable, and as such less-than this
         // version, just for a single case use of removal of last node.
     public boolean remove(char chr) {
-        // Sanity check: size is 0:
-        if (size == 0) {
+        if (first == null) {
             return false;
         }
-        Node prev = null;
+        if (first.cp.equals(chr)) {
+            first = first.next;
+            size--;
+            return true;
+        }
         Node current = first;
-        while (current != null) {
-            if (current.cp.chr == chr) {
-                if (prev == null) {
-                    // just remove first element
-                    first = first.next;
-                } else {
-                    // remove element from middle or end
-                    prev.next = current.next;
-                }
+        while (current.next != null) {
+            if (current.next.cp.equals(chr)) {
+                current.next = current.next.next;
                 size--;
                 return true;
             }
-            // Pointer advancement:
-            prev = current;
             current = current.next;
         }
         return false;

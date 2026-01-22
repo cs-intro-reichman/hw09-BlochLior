@@ -35,18 +35,26 @@ public class LanguageModel {
 	public void train(String fileName) {
 		In in = new In(fileName);
         
-        // entire text because this is how the tests work apparently
-        String text = in.readAll();
+        StringBuilder buff = new StringBuilder();
 
-        for (int i = 0; i < text.length() - windowLength; i++) {
-            String window = text.substring(i, i + windowLength);
-            char nextChar = text.charAt(i + windowLength);
-            List probs = CharDataMap.get(window);
-            if (probs == null) {
-                probs = new List();
-                CharDataMap.put(window, probs);
+        while (buff.length() < windowLength && in.hasNextChar()) {
+            buff.append(in.readChar());
+        }
+        if (buff.length() < windowLength) {
+            return;
+        }
+
+        String window = buff.toString();
+
+        while (in.hasNextChar()) {
+            char nextChar = in.readChar();
+            List list = CharDataMap.get(window);
+            if (list == null) {
+                list = new List();
+                CharDataMap.put(window, list);
             }
-            probs.update(nextChar);
+            list.update(nextChar);
+            window = window.substring(1) + nextChar;
         }
         for (List list : CharDataMap.values()) {
             calculateProbabilities(list);
@@ -118,26 +126,7 @@ public class LanguageModel {
 		StringBuilder out = new StringBuilder();
         for (String key : CharDataMap.keySet()) {
             List probs = CharDataMap.get(key);
-            
-            // Print the key
-            out.append(key).append(" : ["); // Formatting key start
-            
-            // Iterate over the list to format items nicely
-            for (int i = 0; i < probs.getSize(); i++) {
-                CharData cd = probs.get(i);
-                out.append("(");
-                out.append(cd.chr).append(", ");
-                out.append(cd.count).append(", ");
-                out.append(cd.p).append(", ");
-                out.append(cd.cp);
-                out.append(")");
-                
-                // Add semicolon if not the last item
-                if (i < probs.getSize() - 1) {
-                    out.append("; ");
-                }
-            }
-            out.append("]\n");
+            out.append(key).append(" : [" + probs + "\n");
         }
         return out.toString();
 	}
