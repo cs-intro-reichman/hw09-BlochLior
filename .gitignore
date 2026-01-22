@@ -52,3 +52,6 @@ local.properties
 /.idea/
 /*.iml
 /*.log
+
+*TestsOld.java
+*ListOldTests.java
